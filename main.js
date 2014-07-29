@@ -66,39 +66,39 @@ for (var i = 1; i < trArr.length - 1; i++) {
             tmp = tmp.substring(tmp.indexOf("|") + 1)
         }
         alphaMark = tmp;
-        if (alphaMark == "D") {
+        if (alphaMark == "D" || (mark>=4 && mark<5)) {
             mark4 = 1;
             DTCCount += tc;
             DCount++
-        } else if (alphaMark == "D+") {
+        } else if (alphaMark == "D+" || (mark>=5 && mark <5.5)) {
             mark4 = 1.5;
             DPlusTCCount += tc;
             DPlusCount++
-        } else if (alphaMark == "C") {
+        } else if (alphaMark == "C" || (mark>=5.5 && mark<6.5)) {
             mark4 = 2;
             CTCCount += tc;
             CCount++
-        } else if (alphaMark == "C+") {
+        } else if (alphaMark == "C+" || (mark >=6.5 && mark <7)) {
             mark4 = 2.5;
             CPlusTCCount += tc;
             CPlusCount++
-        } else if (alphaMark == "B") {
+        } else if (alphaMark == "B" || (mark>=7 && mark < 8)) {
             mark4 = 3;
             BTCCount += tc;
             BCount++
-        } else if (alphaMark == "B+") {
+        } else if (alphaMark == "B+" || (mark>=8 && mark <8.5)) {
             mark4 = 3.5;
             BPlusTCCount += tc;
             BPlusCount++
-        } else if (alphaMark == "A") {
+        } else if (alphaMark == "A" || (mark>=8.5 && mark <9)) {
             mark4 = 3.7;
             ATCCount += tc;
             ACount++
-        } else if (alphaMark == "A+") {
+        } else if (alphaMark == "A+" || mark>=9) {
             mark4 = 4;
             APlusTCCount += tc;
             APlusCount++
-        } else {
+        }else {
             mark4 = 0;
             FTCCount += tc;
             FCount++

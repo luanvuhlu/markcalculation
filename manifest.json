@@ -2,13 +2,16 @@
   "manifest_version": 2,
   "name": "HLU Mark Calculation",
   "description": "This extension calculate your marks.",
-  "version": "2.2",
+  "version": "2.5",
 	"icons": { "128": "icon.png" },
   "content_scripts": [
     {
       "matches": 
-      ["http://210.245.13.149/CMCSoft.IU.Web.info/(*)/StudentMark.aspx", 
-      "http://www.dangkyhoc.hlu.edu.vn/CMCSoft.IU.Web.info/(*)/StudentMark.aspx"],
+      [
+      "http://210.245.13.149/CMCSoft.IU.Web.info/(*)/StudentMark.aspx", 
+      "http://dangkyhoc.hlu.edu.vn/CMCSoft.IU.Web.info/(*)/StudentMark.aspx",
+      "http://www.dangkyhoc.hlu.edu.vn/CMCSoft.IU.Web.info/(*)/StudentMark.aspx"
+      ],
       "js": ["main.js"]
     }
   ],
