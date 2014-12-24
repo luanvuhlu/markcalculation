@@ -4,4 +4,22 @@ table.table{
 div.author{
 	float:right;
 	}
-  
+td.label{
+	font-weight: 900;
+}
+#result-tbl td.label{
+	width: 20%;
+	text-align: center;
+}
+#sum-tbl td.label{
+	width: 40%;
+	text-align: left;
+}
+p.error{
+	color: red;
+}
+p.header{
+	font-weight: 900;
+	font-size: 14px;
+	text-align: center;
+}
