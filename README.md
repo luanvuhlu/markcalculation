@@ -1,4 +1,4 @@
 markcalculation
 ===============
 
-This is Chrome extension for calculating mark of Student's HLU
+This is Chrome extension for calculating mark of HLU's Student
