@@ -1,9 +1,22 @@
-function setDOMInfo(info) {
-    if(typeof info == 'undefined'){
-        document.getElementById('result').style.display='none';
+function setDOMInfo(info){
+	if(typeof info == 'undefined'){
         return;
     }
+	if(info.typeInfo === 0){
+		document.getElementById('result').style.display='block';
+		return setDOMMarkInfo(info);
+	}
+	if(info.typeInfo === 1){
+		document.getElementById('info-process').style.display='block';
+		return setDOMProcessInfo(info);
+	}
+}
+function emptyScreen(){
+	document.getElementById('result').style.display='none';
     document.getElementById('info-detail').style.display='none';
+    document.getElementById('info-process').style.display='none';
+}
+function setDOMMarkInfo(info) {
     setElement('APlusTC', info.APlusTCCount);
     setElement('ATC', info.ATCCount);
     setElement('APlusM', info.APlusCount);
@@ -48,8 +61,15 @@ function setDOMInfo(info) {
         subjs+='</ol>';
         setElement('msgInfo', '<p>Các môn sau chưa có điểm hoặc gặp lỗi nào đó nên chưa được tính, mong bạn thông cảm:</p>'+subjs);
     }
-
 }   
+function setDOMProcessInfo(info){
+	if(info.msg.length === 0){
+		emptyScreen();
+		return;
+	}
+    setElement("info-process", info.msg.join("<p>"));
+    
+}
 function setElement(id, value){
     if(value==0){
         value='';

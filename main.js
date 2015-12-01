@@ -10,68 +10,77 @@ chrome.runtime.onMessage.addListener(function(msg, sender, response) {
     }
 });	
 function isProcessPage(){
-	return new RegExp('^.+CourseByFieldTree\.aspx$').test(document.URL);
+	return new RegExp('^.+coursebyfieldtree\.aspx$').test(document.URL.toLowerCase());
+}
+function isMarkPage(){
+	return new RegExp('^.+studentmark\.aspx$').test(document.URL.toLowerCase());
 }
 function catchSite(){
 	if(isProcessPage()){
 		try{
-			checkProcess();
+			return checkProcess();
 		}catch (e) {
 			console.log(e);
 		}
-		
 		return undefined;
 	}
-	return getInfo();
+	if(isMarkPage()){
+		try{
+			return getInfo();
+		}catch (e) {
+			console.log(e);
+		}
+		return undefined;
+	}
+	
+	return undefined;
 }
 function checkProcess(){
 	var mainTable = document.getElementById('grdField');
 	if(mainTable === undefined){
-		return;
+		return {typeInfo : 1, msg:[]};
 	}
-	var msg = [], 
+	var msg = [],
+	tmpMsg="",
 	tcSum = 0, 
-	part = [],
+	parts = [],
 	trTags = mainTable.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
-	msg.push("Thông báo từ extension:");
-	for(var i = 1; i<trTags.length; i++){
+	msg.push("<b>Thông báo từ extension:</b>");
+	for(var i = 1, j=0; i<trTags.length; i++, j++){
 		try{
-			part[i] = parseInt(trTags[i].getElementsByTagName('td')[6]
+			parts[j] = parseInt(trTags[i].getElementsByTagName('td')[6]
 			.getElementsByTagName('font')[0]
 			.getElementsByTagName('span')[0].innerHTML);
-			msg.push(testPart(i, part[i]));
-			tcSum += part[i];
+			tcSum += parts[j];
 		}catch (e) {
 			console.log(e);
 			return;
 		}
 	}
-	msg.push(testTotalTC(tcSum));
-	msg.push("Chú ý: Đây không phải thông báo từ nhà trường nên không đảm bảo tính xác thực. Nếu có vấn đề không chắc chắn, hãy liên hệ với nhà trường(nhiều lần) để chắc chắn ra trường đúng hạn. Merry Christmas!");
-	alert(msg.join("\n"));
+	msg=testComplexPart(parts, msg);
+	if(msg.length === 0 && (tmpMsg = testTotalTC(tcSum)) != ""){
+		msg.push(tmpMsg);
+	}
+	if(msg.length === 0){
+		msg.push("Mọi thứ trông có vẻ <b>OK</b>");
+	}
+//	msg.push("<b>*Mọi thông tin ở trên đều chỉ mang tính tham khảo.</b>");
+	return {typeInfo : 1, msg:msg};
 }
 function testTotalTC(tcSum){
-	return tcSum < 120 ? "Bạn chưa học đủ 120 TC. Bạn nên xem lại và học bổ sung các phần. Nếu có một số môn bạn chưa có điểm thì nên kiểm tra lại, cái đó phải tự làm thôi":"";
+	return tcSum < 120 ? "Bạn chưa học đủ 120 tín chỉ. Bạn nên xem lại và học bổ sung các phần. Nếu có một số môn bạn chưa có điểm thì nên kiểm tra lại, cái đó phải tự làm thôi":"";
 }
-function testComplexPart(parts){
-	// TODO Chưa biết điều kiện ntn.
-	return "";
-}
-function testPart(index, tcCount){
-	switch(index){
-		case 1: 
-			return "1.Khối Giáo dục chuyên nghiệp phần bắt buộc:"+(tcCount < 60 ? " Yêu cầu tối thiểu 60 tín chỉ, bạn còn thiếu "+(60 - tcCount) : "OK");
-		case 2:
-			return "2.Khối Giáo dục chuyên nghiệp phần tự chọn:"+(tcCount < 5 ? " Yêu cầu tối thiểu 5 tín chỉ, bạn còn thiếu "+(5 - tcCount) : "OK");
-		case 3:
-			return "3.Khối Giáo dục đại cương phần bắt buộc:"+(tcCount < 19 ? " Yêu cầu tối thiểu 19 tín chỉ, bạn còn thiếu "+(19 - tcCount) : "OK");
-		case 4:
-			return "4.Khối Giáo dục đại cương phần tự chọn:"+(tcCount < 5 ? " Yêu cầu tối thiểu 5 tín chỉ, bạn còn thiếu "+(5 - tcCount) : "OK");
-		case 5:
-			return "5.Khối Giáo dục chuyên nghiệp phần tự chọn:"+(tcCount < 30 ? " Yêu cầu tối thiểu 30 tín chỉ, bạn còn thiếu "+(30 - tcCount)+", nếu bạn viết khoá luận thì"+(tcCount < 20 ?" bạn còn thiếu "+(20 - tcCount):"OK, nhưng phải xong khoá luận") : "OK");
-		default:
-				return ""
+function testComplexPart(parts, msg){
+	var part14=parts[1]+parts[4], part014=parts[0]+parts[1]+parts[4];
+	// Phần 1 > 60
+	msg.push("Phần 1. Khối Giáo dục chuyên nghiệp phần bắt buộc:"+(parts[0] < 60 ? " Yêu cầu tối thiểu 60 tín chỉ, bạn còn thiếu <b>"+(60 - parts[0])+"</b> tín chỉ" : " <b>OK</b>"));
+	msg.push("Phần 3. Khối Giáo dục đại cương phần bắt buộc:"+(parts[2] < 19 ? " Yêu cầu tối thiểu 19 tín chỉ, bạn còn thiếu <b>"+(19 - parts[2])+"</b> tín chỉ" : " <b>OK</b>"));
+	msg.push("Phần 4. Khối Giáo dục đại cương phần tự chọn:"+(parts[3] < 5 ? " Yêu cầu tối thiểu 5 tín chỉ, bạn còn thiếu <b>"+(5 - parts[3])+"</b> tín chỉ" : " <b>OK</b>"));
+	msg.push("Phần 2 + Phần 5. Khối giáo dục chuyên nghiệp tự chọn: "+(part14 < 25 ? "Yêu cầu tối thiểu 25, bạn còn thiếu <b>"+(25-part14)+"</b> tín chỉ" : " <b>OK</b>"));
+	if(part014 < 95){
+		msg.push("Nếu bạn <b>không viết khóa luận</b>, khối giáo dục chuyên nghiệp cần tối thiểu 95 tín chỉ, bạn còn thiếu <b>"+(95 - part014)+"</b> tín chỉ");
 	}
+	return msg;
 }
 function getInfo(){
 	var table = document.getElementById("tblStudentMark");
@@ -203,6 +212,7 @@ function getInfo(){
 		tbmFirst = (firstMarkSum / tcSum).toFixed(2);
 
 		return {
+			typeInfo : 0,
 			tcSum : tcSum,
 			subjectSum : subjectSum,
 			FCount : FCount,

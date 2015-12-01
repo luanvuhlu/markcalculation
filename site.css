@@ -1,9 +1,16 @@
-table.table{
-	width: 500px;
+body{
+	width: 600px;
 }
-div.author{
-	float:right;
-	}
+#info-process, #info-detail, #result{
+	display: none;
+}
+/* div.author{ */
+/* 	float:right; */
+/* } */
+/* div.author a{ */
+/* 	text-decoration: none; */
+/* 	color: white; */
+/* } */
 td.label{
 	font-weight: 900;
 }
@@ -22,4 +29,8 @@ p.header{
 	font-weight: 900;
 	font-size: 14px;
 	text-align: center;
+}
+#info-process{
+    color: #0D47EA;
+    font-size: 14px;
 }
